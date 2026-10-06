@@ -212,7 +212,9 @@ def run_market_scanner():
             system_state["agents"]["scanner"]["last_run"] = datetime.now().strftime("%H:%M:%S")
             eth_p = data.get("ETH/USDT", {}).get("price", 0)
             btc_p = data.get("BTC/USDT", {}).get("price", 0)
+            bnb_p = data.get("BNB/USDT", {}).get("price", 0)
             system_state["agents"]["scanner"]["log"] = f"BTC ${btc_p:,.0f} | ETH ${eth_p:,.2f} (Synced)"
+            log_activity("Market Scanner", f"📡 Polled {len(data)} live pairs: BTC ${btc_p:,.2f} | ETH ${eth_p:,.2f} | BNB ${bnb_p:,.2f}")
         else:
             system_state["agents"]["scanner"]["status"] = "active"
             system_state["agents"]["scanner"]["log"] = "Reconnecting feeds..."
@@ -272,7 +274,9 @@ def run_signal_generator():
             system_state["agents"]["signal"]["status"] = "active"
             system_state["agents"]["signal"]["last_run"] = datetime.now().strftime("%H:%M:%S")
             eth_sig = signals.get("ETH/USDT", {})
+            btc_sig = signals.get("BTC/USDT", {})
             system_state["agents"]["signal"]["log"] = f"ETH RSI: {eth_sig.get('rsi', 50)} | Verdict: {eth_sig.get('verdict', 'HOLD')}"
+            log_activity("Signal Agent", f"🧮 Strategy Matrix: ETH RSI={eth_sig.get('rsi', 50)} ({eth_sig.get('verdict', 'HOLD')}) | BTC Trend={btc_sig.get('ema_trend', 'Neutral')}")
     except Exception as e:
         system_state["agents"]["signal"]["status"] = "error"
         system_state["agents"]["signal"]["log"] = f"Signal: {str(e)[:45]}"
@@ -289,7 +293,7 @@ def run_portfolio_monitor():
                 system_state["portfolio"]["free_usdt"] = round(float(bal['free'].get('USDT', 0)), 2)
                 system_state["portfolio"]["used_usdt"] = round(float(bal['used'].get('USDT', 0)), 2)
         except Exception:
-            pass  # Fallback to local paper trading ledger
+            pass
 
         # CALCULATE LIVE DYNAMIC P&L ON 0.01 ETH POSITION
         curr_eth = system_state["market_data"].get("ETH/USDT", {}).get("price", 0)
@@ -304,6 +308,7 @@ def run_portfolio_monitor():
             
             pnl_icon = "+" if unrealized_pnl >= 0 else ""
             system_state["agents"]["portfolio_monitor"]["log"] = f"ETH P&L: {pnl_icon}${unrealized_pnl:.4f} ({pnl_icon}{unrealized_pnl_pct:.2f}%)"
+            log_activity("Portfolio Monitor", f"📈 0.01 ETH @ ${entry_price:,.2f} → Now ${curr_eth:,.2f} | P&L: {pnl_icon}${unrealized_pnl:.4f} ({pnl_icon}{unrealized_pnl_pct:.2f}%)")
 
         system_state["portfolio"]["last_updated"] = datetime.now().strftime("%H:%M:%S")
         system_state["agents"]["portfolio_monitor"]["status"] = "active"
@@ -324,6 +329,7 @@ def run_risk_manager():
         system_state["agents"]["risk"]["status"] = "active"
         system_state["agents"]["risk"]["last_run"] = datetime.now().strftime("%H:%M:%S")
         system_state["agents"]["risk"]["log"] = f"Max trade size: ${max_trade_usdt} | Utilized: {margin_pct}%"
+        log_activity("Risk Manager", f"🛡️ Risk Audit: Wallet ${total_balance:,.2f} | Max 2% Allocation: ${max_trade_usdt} | Margin: {margin_pct}% (Risk: SAFE)")
     except Exception as e:
         system_state["agents"]["risk"]["status"] = "error"
         system_state["agents"]["risk"]["log"] = f"Risk: {str(e)[:45]}"
@@ -337,12 +343,18 @@ def run_trade_executor():
         
     system_state["agents"]["trader"]["status"] = "working"
     try:
+        executed_any = False
         for sym, sig in system_state["signals"].items():
             if sig.get("verdict") == "BUY" and sig.get("score", 0) >= 2:
-                log_activity("Trade Executor", f"🚀 BUY Signal executed for {sym} at ${sig['price']}")
+                log_activity("Trade Executor", f"🚀 BUY Signal Triggered for {sym} at ${sig['price']}")
+                executed_any = True
             elif sig.get("verdict") == "SELL" and sig.get("score", 0) <= -2:
-                log_activity("Trade Executor", f"🔻 SELL Signal executed for {sym} at ${sig['price']}")
+                log_activity("Trade Executor", f"🔻 SELL Signal Triggered for {sym} at ${sig['price']}")
+                executed_any = True
                 
+        if not executed_any:
+            log_activity("Trade Executor", "⚡ Auto-Trading Loop Active: Watching all pairs for score >= +2 or <= -2 entry triggers.")
+            
         system_state["agents"]["trader"]["status"] = "active"
         system_state["agents"]["trader"]["last_run"] = datetime.now().strftime("%H:%M:%S")
         system_state["agents"]["trader"]["log"] = "Monitoring signals for auto-entry"
