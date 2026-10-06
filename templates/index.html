@@ -2,115 +2,129 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Financial Institution — Binance Paper Trading Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Financial Institution — Binance Paper Trading</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #0b0e14; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; }
+        body { background-color: #0b0e14; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; -webkit-tap-highlight-color: transparent; }
         .card { background-color: #121722; border: 1px solid #1e2638; border-radius: 0.75rem; }
         .card-header { border-bottom: 1px solid #1e2638; }
         .pulse-green { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* Hide scrollbars for clean mobile horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #0b0e14; }
         ::-webkit-scrollbar-thumb { background: #1e2638; border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col pb-16 lg:pb-0">
 
-    <!-- Top Header -->
-    <header class="card border-x-0 border-t-0 rounded-none px-6 py-3 flex flex-wrap items-center justify-between sticky top-0 z-50 bg-[#0e131d]/95 backdrop-blur">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-bold text-xl">
+    <!-- Top Sticky Header -->
+    <header class="card border-x-0 border-t-0 rounded-none px-3.5 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-50 bg-[#0e131d]/95 backdrop-blur">
+        <div class="flex items-center space-x-2.5 min-w-0">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-bold text-base flex-shrink-0">
                 <i class="fa-solid fa-building-columns"></i>
             </div>
-            <div>
-                <h1 class="font-extrabold text-base tracking-wide text-white flex items-center gap-2">
-                    AI FINANCIAL INSTITUTION
-                    <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono">BINANCE TESTNET</span>
+            <div class="min-w-0">
+                <h1 class="font-extrabold text-xs sm:text-sm tracking-wide text-white flex items-center gap-1.5 truncate">
+                    <span>AI INSTITUTION</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono">TESTNET</span>
                 </h1>
-                <p class="text-xs text-slate-400">Autonomous Multi-Agent Paper Trading & Quantitative Command Center</p>
+                <p class="text-[10px] sm:text-xs text-slate-400 truncate">Autonomous Multi-Agent Trading</p>
             </div>
         </div>
 
-        <!-- Header Status & Controls -->
-        <div class="flex items-center space-x-4">
-            <div class="flex items-center space-x-2 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-                <span class="text-xs text-slate-400 font-medium">Auto-Trading Loop:</span>
-                <span id="autoTradeBadge" class="text-xs px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-400">PAUSED</span>
-                <button onclick="toggleAutoTrade()" id="toggleBtn" class="ml-2 text-xs px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded transition font-medium">
+        <!-- Header Controls -->
+        <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+            <div class="flex items-center space-x-1.5 bg-slate-900/90 px-2 sm:px-3 py-1 rounded-lg border border-slate-800 text-[11px]">
+                <span class="hidden sm:inline text-slate-400">Auto-Trader:</span>
+                <span id="autoTradeBadge" class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-bold bg-slate-800 text-slate-400">PAUSED</span>
+                <button onclick="toggleAutoTrade()" id="toggleBtn" class="text-[10px] sm:text-xs px-2 py-0.5 bg-indigo-600 active:scale-95 hover:bg-indigo-500 text-white rounded transition font-medium">
                     Toggle
                 </button>
             </div>
-            <div class="flex items-center space-x-2 text-xs text-slate-400 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+            <div class="hidden sm:flex items-center space-x-1.5 text-[11px] text-slate-400 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-green"></span>
-                <span>Live Feed</span>
                 <span id="lastSync" class="font-mono text-slate-300">Syncing...</span>
             </div>
         </div>
     </header>
 
-    <!-- Ticker Tape -->
-    <div id="tickerTape" class="grid grid-cols-2 md:grid-cols-5 gap-3 px-6 py-3 bg-[#0d111a] border-b border-slate-800/80 text-xs font-mono">
+    <!-- Mobile-Optimized Ticker Tape (Horizontal Swipeable) -->
+    <div id="tickerTape" class="flex overflow-x-auto no-scrollbar space-x-2 px-3 sm:px-6 py-2 bg-[#0d111a] border-b border-slate-800/80 text-xs font-mono">
         <!-- Rendered by JS -->
     </div>
 
-    <!-- Main Content Grid -->
-    <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Mobile View Tabs Switcher (Visible on mobile, hidden on lg screens) -->
+    <div class="flex lg:hidden bg-[#0d111a] border-b border-slate-800/80 px-3 py-1.5 justify-around text-xs font-semibold">
+        <button onclick="switchMobileTab('chart')" id="tabBtn-chart" class="mobile-tab-btn flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 transition">
+            <i class="fa-solid fa-chart-line mr-1"></i> Chart & Signals
+        </button>
+        <button onclick="switchMobileTab('agents')" id="tabBtn-agents" class="mobile-tab-btn flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent transition">
+            <i class="fa-solid fa-users-gear mr-1"></i> Sub-Agents
+        </button>
+        <button onclick="switchMobileTab('wallet')" id="tabBtn-wallet" class="mobile-tab-btn flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent transition">
+            <i class="fa-solid fa-wallet mr-1"></i> Trade & Wallet
+        </button>
+    </div>
 
-        <!-- LEFT COLUMN: Chart & Technical Signals (7 Cols) -->
-        <div class="lg:col-span-7 flex flex-col space-y-6">
+    <!-- Main Content Grid -->
+    <main class="flex-1 p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 max-w-7xl mx-auto w-full">
+
+        <!-- SECTION 1: Chart & Technical Signals -->
+        <div id="section-chart" class="mobile-section lg:col-span-7 flex flex-col space-y-4 sm:space-y-6">
 
             <!-- Interactive TradingView Chart -->
             <div class="card p-0 flex flex-col overflow-hidden">
-                <div class="card-header px-4 py-3 flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
+                <div class="card-header px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+                    <div class="flex items-center space-x-2 min-w-0">
                         <i class="fa-solid fa-chart-line text-indigo-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white tracking-wide">Live Interactive Market Chart</span>
+                        <span class="text-xs sm:text-sm font-bold text-white tracking-wide truncate">Live Market Chart</span>
                     </div>
-                    <div class="flex items-center space-x-1" id="chartSymbolSwitcher">
-                        <button onclick="changeChart('BTCUSDT')" class="text-xs px-2.5 py-1 rounded bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white transition">BTC</button>
-                        <button onclick="changeChart('ETHUSDT')" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white transition">ETH</button>
-                        <button onclick="changeChart('BNBUSDT')" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white transition">BNB</button>
-                        <button onclick="changeChart('SOLUSDT')" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white transition">SOL</button>
-                        <button onclick="changeChart('ADAUSDT')" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white transition">ADA</button>
+                    <!-- Symbol Switcher -->
+                    <div class="flex items-center space-x-1 overflow-x-auto no-scrollbar" id="chartSymbolSwitcher">
+                        <button onclick="changeChart('BTCUSDT')" class="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-indigo-600 text-white font-medium">BTC</button>
+                        <button onclick="changeChart('ETHUSDT')" class="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-medium">ETH</button>
+                        <button onclick="changeChart('BNBUSDT')" class="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-medium">BNB</button>
+                        <button onclick="changeChart('SOLUSDT')" class="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-medium">SOL</button>
+                        <button onclick="changeChart('ADAUSDT')" class="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-medium">ADA</button>
                     </div>
                 </div>
-                <!-- TradingView Embed Widget -->
-                <div id="tvChartContainer" style="height: 420px; width: 100%;">
-                    <!-- TradingView Widget BEGIN -->
+
+                <!-- Responsive TradingView Embed -->
+                <div id="tvChartContainer" class="w-full h-[320px] sm:h-[420px]">
                     <iframe id="tvIframe"
-                        src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=BINANCE%3ABTCUSDT&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0b0e14&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost"
+                        src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=BINANCE%3ABTCUSDT&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=0b0e14&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost"
                         style="width: 100%; height: 100%; border: none;">
                     </iframe>
-                    <!-- TradingView Widget END -->
                 </div>
             </div>
 
-            <!-- Technical Signals & Setup Table -->
-            <div class="card p-4">
+            <!-- Technical Signals Table -->
+            <div class="card p-3.5 sm:p-4">
                 <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-microchip text-yellow-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white">Sub-Agent Technical Analysis Matrix</span>
+                        <span class="text-xs sm:text-sm font-bold text-white">Technical Analysis Matrix</span>
                     </div>
-                    <span class="text-xs text-slate-400 font-mono">1H Strategy: RSI(14) + EMA 20/50 + MACD</span>
+                    <span class="text-[10px] text-slate-400 font-mono">1H Strategy</span>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
+                <div class="overflow-x-auto -mx-1 sm:mx-0">
+                    <table class="w-full text-left text-[11px] sm:text-xs font-mono min-w-[500px]">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-800">
                                 <th class="pb-2">Symbol</th>
                                 <th class="pb-2 text-right">Price</th>
-                                <th class="pb-2 text-center">RSI (14)</th>
-                                <th class="pb-2 text-center">EMA Trend</th>
-                                <th class="pb-2 text-right">MACD Hist</th>
-                                <th class="pb-2 text-center">Signal Score</th>
-                                <th class="pb-2 text-center">Verdict</th>
+                                <th class="pb-2 text-center">RSI(14)</th>
+                                <th class="pb-2 text-center">Trend</th>
+                                <th class="pb-2 text-right">MACD</th>
+                                <th class="pb-2 text-center">Score</th>
+                                <th class="pb-2 text-center">Signal</th>
                             </tr>
                         </thead>
                         <tbody id="signalsTableBody" class="divide-y divide-slate-800/60">
@@ -120,23 +134,23 @@
                 </div>
             </div>
 
-            <!-- Open Orders & Trade History -->
-            <div class="card p-4">
+            <!-- Open Orders & Paper Trade Log -->
+            <div class="card p-3.5 sm:p-4">
                 <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-receipt text-emerald-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white">Active Orders & Paper Trade Log</span>
+                        <span class="text-xs sm:text-sm font-bold text-white">Active Orders & Executions</span>
                     </div>
-                    <span class="text-xs text-slate-400 font-mono" id="openOrdersCount">0 Open</span>
+                    <span class="text-[10px] text-slate-400 font-mono" id="openOrdersCount">0 Open</span>
                 </div>
-                <div class="overflow-x-auto max-h-56">
-                    <table class="w-full text-left text-xs font-mono">
+                <div class="overflow-x-auto -mx-1 sm:mx-0 max-h-56">
+                    <table class="w-full text-left text-[11px] sm:text-xs font-mono min-w-[420px]">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="pb-2">Order ID</th>
-                                <th class="pb-2">Symbol</th>
+                                <th class="pb-2">ID</th>
+                                <th class="pb-2">Pair</th>
                                 <th class="pb-2">Side</th>
-                                <th class="pb-2 text-right">Amount</th>
+                                <th class="pb-2 text-right">Qty</th>
                                 <th class="pb-2 text-right">Price</th>
                                 <th class="pb-2 text-center">Status</th>
                             </tr>
@@ -150,58 +164,44 @@
 
         </div>
 
-        <!-- RIGHT COLUMN: Sub-Agents Roster, Portfolio, Risk & Manual Execution (5 Cols) -->
-        <div class="lg:col-span-5 flex flex-col space-y-6">
+        <!-- SECTION 2 & 3: Right Column on Desktop, Mobile Sections -->
+        <div id="section-sidebar" class="lg:col-span-5 flex flex-col space-y-4 sm:space-y-6">
 
             <!-- Portfolio Summary Cards -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="card p-3.5 border-l-4 border-l-indigo-500">
-                    <span class="text-xs text-slate-400">Total Wallet (USDT)</span>
-                    <div class="text-xl font-extrabold text-white font-mono mt-1" id="totalUsdt">$0.00</div>
-                    <div class="text-[11px] text-slate-400 mt-1 flex justify-between font-mono">
+            <div id="section-wallet" class="mobile-section grid grid-cols-2 gap-2.5 sm:gap-3">
+                <div class="card p-3 sm:p-3.5 border-l-4 border-l-indigo-500">
+                    <span class="text-[11px] text-slate-400">Total Wallet (USDT)</span>
+                    <div class="text-base sm:text-xl font-extrabold text-white font-mono mt-0.5 sm:mt-1 truncate" id="totalUsdt">$0.00</div>
+                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-1 flex justify-between font-mono">
                         <span>Free: <span id="freeUsdt" class="text-slate-200">$0.00</span></span>
                         <span>Locked: <span id="usedUsdt" class="text-amber-400">$0.00</span></span>
                     </div>
                 </div>
 
-                <div class="card p-3.5 border-l-4 border-l-emerald-500">
-                    <span class="text-xs text-slate-400">ETH Unrealized P&L</span>
-                    <div class="text-xl font-extrabold font-mono mt-1" id="unrealizedPnl">$0.0000</div>
-                    <div class="text-[11px] text-slate-400 mt-1 flex justify-between font-mono">
-                        <span>Holding: 0.01 ETH</span>
-                        <span>Entry: $2,702.86</span>
+                <div class="card p-3 sm:p-3.5 border-l-4 border-l-emerald-500">
+                    <span class="text-[11px] text-slate-400">ETH Position P&L</span>
+                    <div class="text-base sm:text-xl font-extrabold font-mono mt-0.5 sm:mt-1 truncate" id="unrealizedPnl">$0.0000</div>
+                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-1 flex justify-between font-mono">
+                        <span>0.01 ETH</span>
+                        <span>Entry $2,702.86</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Sub-Agents Status & Roster -->
-            <div class="card p-4">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-users-gear text-indigo-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white">Scheduled Sub-Agents Command Roster</span>
-                    </div>
-                    <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-mono">5 ACTIVE</span>
-                </div>
-                <div class="space-y-2.5" id="agentsRoster">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Quick Manual Order Execution Box -->
-            <div class="card p-4">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
+            <!-- Instant Paper Order Execution Terminal -->
+            <div id="section-tradebox" class="mobile-section card p-3.5 sm:p-4">
+                <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-800">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-bolt text-amber-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white">Instant Paper Execution Terminal</span>
+                        <span class="text-xs sm:text-sm font-bold text-white">Instant Paper Terminal</span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-mono">Testnet Direct</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Direct API</span>
                 </div>
-                <div class="space-y-3 text-xs font-mono">
+                <div class="space-y-2.5 text-xs font-mono">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-slate-400 block mb-1">Pair</label>
-                            <select id="tradePair" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white">
+                            <label class="text-slate-400 block mb-1 text-[11px]">Symbol</label>
+                            <select id="tradePair" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-white text-xs">
                                 <option value="ETH/USDT">ETH/USDT</option>
                                 <option value="BTC/USDT">BTC/USDT</option>
                                 <option value="BNB/USDT">BNB/USDT</option>
@@ -210,32 +210,46 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-slate-400 block mb-1">Quantity</label>
-                            <input id="tradeQty" type="number" step="0.001" value="0.01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white">
+                            <label class="text-slate-400 block mb-1 text-[11px]">Amount</label>
+                            <input id="tradeQty" type="number" step="0.001" value="0.01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-white text-xs">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 pt-1">
-                        <button onclick="executeTrade('BUY')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition flex items-center justify-center gap-1.5">
+                        <button onclick="executeTrade('BUY')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white rounded font-bold transition flex items-center justify-center gap-1.5 text-xs shadow-lg shadow-emerald-900/30">
                             <i class="fa-solid fa-arrow-trend-up"></i> BUY MARKET
                         </button>
-                        <button onclick="executeTrade('SELL')" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded font-bold transition flex items-center justify-center gap-1.5">
+                        <button onclick="executeTrade('SELL')" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white rounded font-bold transition flex items-center justify-center gap-1.5 text-xs shadow-lg shadow-rose-900/30">
                             <i class="fa-solid fa-arrow-trend-down"></i> SELL MARKET
                         </button>
                     </div>
-                    <p id="tradeFeedback" class="text-[11px] text-center text-slate-400 min-h-[16px]"></p>
+                    <p id="tradeFeedback" class="text-[11px] text-center text-slate-400 min-h-[16px] truncate"></p>
                 </div>
             </div>
 
-            <!-- Live Agent Activity Feed -->
-            <div class="card p-4 flex flex-col flex-1">
+            <!-- Sub-Agents Status Roster -->
+            <div id="section-agents" class="mobile-section card p-3.5 sm:p-4">
                 <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-terminal text-slate-400 text-sm"></i>
-                        <span class="text-sm font-bold text-white">Live Sub-Agent Operations Stream</span>
+                        <i class="fa-solid fa-users-gear text-indigo-400 text-sm"></i>
+                        <span class="text-xs sm:text-sm font-bold text-white">Sub-Agents Roster</span>
                     </div>
-                    <span class="text-[10px] text-slate-400 font-mono">AUTOPUBLISH</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-mono">5 ACTIVE</span>
                 </div>
-                <div id="activityLogs" class="space-y-1.5 max-h-48 overflow-y-auto font-mono text-[11px] text-slate-300">
+                <div class="space-y-2 sm:space-y-2.5" id="agentsRoster">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Live Agent Operations Feed -->
+            <div class="card p-3.5 sm:p-4 flex flex-col flex-1">
+                <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-800">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-terminal text-slate-400 text-sm"></i>
+                        <span class="text-xs sm:text-sm font-bold text-white">Agent Operations Log</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-mono">LIVE</span>
+                </div>
+                <div id="activityLogs" class="space-y-1.5 max-h-40 sm:max-h-48 overflow-y-auto font-mono text-[10px] sm:text-[11px] text-slate-300">
                     <!-- Populated by JS -->
                 </div>
             </div>
@@ -244,22 +258,108 @@
 
     </main>
 
-    <!-- Dashboard Logic Script -->
+    <!-- Bottom Mobile Navigation Bar (Fixed for Mobile thumb navigation) -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0e131d]/95 backdrop-blur border-t border-slate-800 z-50 flex justify-around py-2 text-[10px]">
+        <button onclick="switchMobileTab('chart')" id="navBtn-chart" class="flex flex-col items-center text-indigo-400">
+            <i class="fa-solid fa-chart-line text-sm mb-0.5"></i>
+            <span>Chart</span>
+        </button>
+        <button onclick="switchMobileTab('agents')" id="navBtn-agents" class="flex flex-col items-center text-slate-400">
+            <i class="fa-solid fa-users-gear text-sm mb-0.5"></i>
+            <span>Agents</span>
+        </button>
+        <button onclick="switchMobileTab('wallet')" id="navBtn-wallet" class="flex flex-col items-center text-slate-400">
+            <i class="fa-solid fa-bolt text-sm mb-0.5"></i>
+            <span>Trade</span>
+        </button>
+        <button onclick="toggleAutoTrade()" class="flex flex-col items-center text-slate-400">
+            <i class="fa-solid fa-power-off text-sm mb-0.5"></i>
+            <span>Auto</span>
+        </button>
+    </nav>
+
+    <!-- Scripts -->
     <script>
         let currentChartSymbol = 'BTCUSDT';
+        let currentMobileTab = 'chart';
+
+        // Mobile Tab Switcher Logic
+        function switchMobileTab(tab) {
+            currentMobileTab = tab;
+            const isMobile = window.innerWidth < 1024;
+            
+            if (!isMobile) return;
+
+            const secChart = document.getElementById('section-chart');
+            const secAgents = document.getElementById('section-agents');
+            const secWallet = document.getElementById('section-wallet');
+            const secTradebox = document.getElementById('section-tradebox');
+            const secSidebar = document.getElementById('section-sidebar');
+
+            // Reset tabs styling
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                btn.className = "mobile-tab-btn flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent transition";
+            });
+            const activeTabBtn = document.getElementById(`tabBtn-${tab}`);
+            if (activeTabBtn) {
+                activeTabBtn.className = "mobile-tab-btn flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 transition font-bold";
+            }
+
+            // Bottom Nav styling
+            ['chart', 'agents', 'wallet'].forEach(t => {
+                const navBtn = document.getElementById(`navBtn-${t}`);
+                if (navBtn) {
+                    navBtn.className = t === tab ? "flex flex-col items-center text-indigo-400 font-bold" : "flex flex-col items-center text-slate-400";
+                }
+            });
+
+            if (tab === 'chart') {
+                secChart.style.display = 'flex';
+                secSidebar.style.display = 'none';
+            } else if (tab === 'agents') {
+                secChart.style.display = 'none';
+                secSidebar.style.display = 'flex';
+                secAgents.style.display = 'block';
+                secWallet.style.display = 'none';
+                secTradebox.style.display = 'none';
+            } else if (tab === 'wallet') {
+                secChart.style.display = 'none';
+                secSidebar.style.display = 'flex';
+                secAgents.style.display = 'none';
+                secWallet.style.display = 'grid';
+                secTradebox.style.display = 'block';
+            }
+        }
+
+        // Handle Resize to restore desktop layout
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('section-chart').style.display = 'flex';
+                document.getElementById('section-sidebar').style.display = 'flex';
+                document.getElementById('section-agents').style.display = 'block';
+                document.getElementById('section-wallet').style.display = 'grid';
+                document.getElementById('section-tradebox').style.display = 'block';
+            } else {
+                switchMobileTab(currentMobileTab);
+            }
+        });
+
+        // Initialize mobile view on load
+        if (window.innerWidth < 1024) {
+            switchMobileTab('chart');
+        }
 
         function changeChart(sym) {
             currentChartSymbol = sym;
             const iframe = document.getElementById('tvIframe');
-            iframe.src = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=BINANCE%3A${sym}&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0b0e14&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost`;
+            iframe.src = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=BINANCE%3A${sym}&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=0b0e14&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost`;
             
-            // Highlight button
             const buttons = document.querySelectorAll('#chartSymbolSwitcher button');
             buttons.forEach(btn => {
                 if(btn.innerText === sym.replace('USDT', '')) {
-                    btn.className = "text-xs px-2.5 py-1 rounded bg-indigo-600 text-white border border-indigo-500/30";
+                    btn.className = "text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-indigo-600 text-white font-medium";
                 } else {
-                    btn.className = "text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:bg-indigo-600 hover:text-white transition";
+                    btn.className = "text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-medium";
                 }
             });
         }
@@ -277,39 +377,39 @@
         function renderDashboard(data) {
             document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
 
-            // 1. Auto-trade Badge
+            // Auto-trade Badge
             const badge = document.getElementById('autoTradeBadge');
             const toggleBtn = document.getElementById('toggleBtn');
             if (data.auto_trading) {
-                badge.className = "text-xs px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                badge.className = "text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
                 badge.innerText = "ACTIVE";
                 toggleBtn.innerText = "Pause";
-                toggleBtn.className = "ml-2 text-xs px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded transition font-medium";
+                toggleBtn.className = "text-[10px] sm:text-xs px-2 py-0.5 bg-amber-600 hover:bg-amber-500 text-white rounded transition font-medium";
             } else {
-                badge.className = "text-xs px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-400 border border-slate-700";
+                badge.className = "text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-bold bg-slate-800 text-slate-400 border border-slate-700";
                 badge.innerText = "PAUSED";
-                toggleBtn.innerText = "Activate";
-                toggleBtn.className = "ml-2 text-xs px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded transition font-medium";
+                toggleBtn.innerText = "Start";
+                toggleBtn.className = "text-[10px] sm:text-xs px-2 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded transition font-medium";
             }
 
-            // 2. Ticker Tape
+            // Horizontal Swipeable Ticker Tape
             const tickerTape = document.getElementById('tickerTape');
             let tickerHtml = '';
             for (const [sym, info] of Object.entries(data.market_data)) {
                 const isPos = info.change >= 0;
                 tickerHtml += `
-                    <div class="bg-slate-900/60 p-2 rounded border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700" onclick="changeChart('${sym.replace('/', '')}')">
-                        <span class="font-bold text-slate-300">${sym}</span>
-                        <div class="text-right">
-                            <div class="text-white font-semibold">$${info.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</div>
-                            <div class="${isPos ? 'text-emerald-400' : 'text-rose-400'} text-[11px]">${isPos ? '+' : ''}${info.change.toFixed(2)}%</div>
+                    <div class="bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-800 flex items-center space-x-2.5 cursor-pointer hover:border-slate-700 flex-shrink-0" onclick="changeChart('${sym.replace('/', '')}')">
+                        <span class="font-bold text-slate-300">${sym.replace('/USDT', '')}</span>
+                        <div>
+                            <div class="text-white font-semibold text-[11px]">$${info.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</div>
+                            <div class="${isPos ? 'text-emerald-400' : 'text-rose-400'} text-[10px]">${isPos ? '+' : ''}${info.change.toFixed(2)}%</div>
                         </div>
                     </div>
                 `;
             }
             tickerTape.innerHTML = tickerHtml;
 
-            // 3. Signals Matrix
+            // Signals Matrix
             const signalsBody = document.getElementById('signalsTableBody');
             let sigHtml = '';
             for (const [sym, sig] of Object.entries(data.signals)) {
@@ -319,19 +419,19 @@
 
                 sigHtml += `
                     <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-2.5 font-bold text-white">${sym}</td>
-                        <td class="py-2.5 text-right font-mono">$${sig.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-                        <td class="py-2.5 text-center ${sig.rsi < 35 ? 'text-emerald-400 font-bold' : (sig.rsi > 65 ? 'text-rose-400 font-bold' : 'text-slate-300')}">${sig.rsi}</td>
-                        <td class="py-2.5 text-center ${sig.ema_trend === 'Bullish' ? 'text-emerald-400' : 'text-rose-400'}">${sig.ema_trend}</td>
-                        <td class="py-2.5 text-right ${sig.macd_hist >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${sig.macd_hist}</td>
-                        <td class="py-2.5 text-center text-slate-300">${sig.score > 0 ? '+' : ''}${sig.score}</td>
-                        <td class="py-2.5 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold ${badgeClass}">${sig.verdict}</span></td>
+                        <td class="py-2 font-bold text-white">${sym}</td>
+                        <td class="py-2 text-right font-mono">$${sig.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        <td class="py-2 text-center ${sig.rsi < 35 ? 'text-emerald-400 font-bold' : (sig.rsi > 65 ? 'text-rose-400 font-bold' : 'text-slate-300')}">${sig.rsi}</td>
+                        <td class="py-2 text-center ${sig.ema_trend === 'Bullish' ? 'text-emerald-400' : 'text-rose-400'}">${sig.ema_trend}</td>
+                        <td class="py-2 text-right ${sig.macd_hist >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${sig.macd_hist}</td>
+                        <td class="py-2 text-center text-slate-300">${sig.score > 0 ? '+' : ''}${sig.score}</td>
+                        <td class="py-2 text-center"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${sig.verdict}</span></td>
                     </tr>
                 `;
             }
             signalsBody.innerHTML = sigHtml;
 
-            // 4. Portfolio
+            // Portfolio
             document.getElementById('totalUsdt').innerText = `$${data.portfolio.total_usdt.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('freeUsdt').innerText = `$${data.portfolio.free_usdt.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('usedUsdt').innerText = `$${data.portfolio.used_usdt.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
@@ -340,57 +440,47 @@
             const pnl = data.portfolio.unrealized_pnl;
             const pnlPositive = pnl >= 0;
             pnlEl.innerText = `${pnlPositive ? '+' : ''}$${pnl.toFixed(4)} USDT`;
-            pnlEl.className = `text-xl font-extrabold font-mono mt-1 ${pnlPositive ? 'text-emerald-400' : 'text-rose-400'}`;
+            pnlEl.className = `text-base sm:text-xl font-extrabold font-mono mt-0.5 sm:mt-1 truncate ${pnlPositive ? 'text-emerald-400' : 'text-rose-400'}`;
 
-            // 5. Orders Table
+            // Orders Table
             const ordersBody = document.getElementById('ordersTableBody');
             document.getElementById('openOrdersCount').innerText = `${data.open_orders.length} Open`;
             let ordersHtml = '';
             
-            // Show open orders first
             data.open_orders.forEach(o => {
                 ordersHtml += `
                     <tr class="hover:bg-slate-800/40 text-amber-300">
-                        <td class="py-2 font-mono">#${o.id.slice(-6)}</td>
+                        <td class="py-2 font-mono">#${o.id.slice(-5)}</td>
                         <td class="py-2 font-bold">${o.symbol}</td>
-                        <td class="py-2"><span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-[10px]">${o.side}</span></td>
+                        <td class="py-2"><span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-[9px]">${o.side}</span></td>
                         <td class="py-2 text-right">${o.amount}</td>
                         <td class="py-2 text-right">$${parseFloat(o.price).toLocaleString()}</td>
-                        <td class="py-2 text-center"><span class="px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded text-[10px] uppercase font-bold">${o.status}</span></td>
+                        <td class="py-2 text-center"><span class="px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded text-[9px] uppercase font-bold">${o.status}</span></td>
                     </tr>
                 `;
             });
 
-            // Show recent trades
             data.recent_trades.forEach(t => {
                 ordersHtml += `
                     <tr class="hover:bg-slate-800/40 text-slate-300">
-                        <td class="py-2 font-mono">#${t.id.slice(-6)}</td>
+                        <td class="py-2 font-mono">#${t.id.slice(-5)}</td>
                         <td class="py-2 font-bold">${t.symbol}</td>
-                        <td class="py-2"><span class="px-1.5 py-0.5 ${t.side === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'} rounded text-[10px]">${t.side}</span></td>
+                        <td class="py-2"><span class="px-1.5 py-0.5 ${t.side === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'} rounded text-[9px]">${t.side}</span></td>
                         <td class="py-2 text-right">${t.amount}</td>
                         <td class="py-2 text-right">$${parseFloat(t.price).toLocaleString()}</td>
-                        <td class="py-2 text-center"><span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-[10px] uppercase font-bold">FILLED</span></td>
+                        <td class="py-2 text-center"><span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-[9px] uppercase font-bold">FILLED</span></td>
                     </tr>
                 `;
             });
 
             if(!ordersHtml) {
-                ordersHtml = `<tr><td colspan="6" class="text-center py-4 text-slate-500">No active orders or trades</td></tr>`;
+                ordersHtml = `<tr><td colspan="6" class="text-center py-3 text-slate-500">No active orders</td></tr>`;
             }
             ordersBody.innerHTML = ordersHtml;
 
-            // 6. Sub-Agents Roster
+            // Sub-Agents Roster
             const roster = document.getElementById('agentsRoster');
             let rosterHtml = '';
-            const agentIcons = {
-                scanner: 'fa-radar',
-                signal: 'fa-brain',
-                risk: 'fa-shield-halved',
-                trader: 'fa-bolt-lightning',
-                portfolio_monitor: 'fa-wallet'
-            };
-
             for (const [key, ag] of Object.entries(data.agents)) {
                 let statusColor = "bg-slate-500";
                 let pulse = "";
@@ -399,16 +489,16 @@
                 if(ag.status === 'error') { statusColor = "bg-rose-500"; }
 
                 rosterHtml += `
-                    <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="p-2 sm:p-2.5 rounded bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
                                 <span class="w-2 h-2 rounded-full ${statusColor} ${pulse}"></span>
-                                <span class="font-bold text-xs text-white">${ag.name}</span>
+                                <span class="font-bold text-[11px] sm:text-xs text-white">${ag.name}</span>
                             </div>
-                            <span class="text-[10px] text-slate-400 font-mono">Last: ${ag.last_run}</span>
+                            <span class="text-[9px] text-slate-400 font-mono">${ag.last_run}</span>
                         </div>
-                        <div class="text-[11px] text-slate-400 mt-1 truncate">${ag.role}</div>
-                        <div class="text-[10px] text-indigo-400/90 font-mono mt-0.5 flex items-center gap-1">
+                        <div class="text-[10px] text-slate-400 mt-0.5 truncate">${ag.role}</div>
+                        <div class="text-[9px] sm:text-[10px] text-indigo-400/90 font-mono mt-0.5 truncate flex items-center gap-1">
                             <i class="fa-solid fa-angle-right text-[8px]"></i> ${ag.log}
                         </div>
                     </div>
@@ -416,15 +506,15 @@
             }
             roster.innerHTML = rosterHtml;
 
-            // 7. Activity Logs
+            // Activity Logs
             const logBox = document.getElementById('activityLogs');
             let logHtml = '';
-            data.activity_logs.slice(0, 20).forEach(l => {
+            data.activity_logs.slice(0, 15).forEach(l => {
                 logHtml += `
-                    <div class="flex items-start space-x-2 py-0.5 border-b border-slate-800/40">
-                        <span class="text-slate-500 font-mono text-[10px]">${l.time}</span>
-                        <span class="text-indigo-400 font-semibold">[${l.agent}]</span>
-                        <span class="text-slate-300 flex-1">${l.message}</span>
+                    <div class="flex items-start space-x-1.5 py-0.5 border-b border-slate-800/40">
+                        <span class="text-slate-500 font-mono text-[9px]">${l.time}</span>
+                        <span class="text-indigo-400 font-semibold">[${l.agent.split(' ')[0]}]</span>
+                        <span class="text-slate-300 flex-1 truncate">${l.message}</span>
                     </div>
                 `;
             });
@@ -444,17 +534,17 @@
             const pair = document.getElementById('tradePair').value;
             const qty = parseFloat(document.getElementById('tradeQty').value);
             const fb = document.getElementById('tradeFeedback');
-            fb.innerText = `Submitting ${side} order...`;
+            fb.innerText = `Submitting ${side}...`;
             fb.className = "text-[11px] text-center text-amber-400 min-h-[16px]";
 
             try {
                 const res = await fetch(`/api/manual-trade?sym=${encodeURIComponent(pair)}&side=${side}&qty=${qty}`, { method: 'POST' });
                 const result = await res.json();
                 if (result.status === 'success') {
-                    fb.innerText = `✅ Order Filled: ${side} ${qty} ${pair}`;
+                    fb.innerText = `✅ Filled: ${side} ${qty} ${pair}`;
                     fb.className = "text-[11px] text-center text-emerald-400 min-h-[16px]";
                 } else {
-                    fb.innerText = `❌ Error: ${result.message.slice(0, 50)}`;
+                    fb.innerText = `❌ ${result.message.slice(0, 45)}`;
                     fb.className = "text-[11px] text-center text-rose-400 min-h-[16px]";
                 }
                 fetchState();
@@ -464,7 +554,6 @@
             }
         }
 
-        // Auto Poll every 2.5 seconds
         fetchState();
         setInterval(fetchState, 2500);
     </script>
