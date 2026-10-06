@@ -437,9 +437,8 @@
             document.getElementById('usedUsdt').innerText = `$${data.portfolio.used_usdt.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
             const pnlEl = document.getElementById('unrealizedPnl');
-            const pnl = data.portfolio.unrealized_pnl;
-            const pnlPositive = pnl >= 0;
-            pnlEl.innerText = `${pnlPositive ? '+' : ''}$${pnl.toFixed(4)} USDT`;
+            const pct = data.portfolio.unrealized_pnl_pct || 0;
+            pnlEl.innerText = `${pnlPositive ? '+' : ''}$${pnl.toFixed(4)} USDT (${pnlPositive ? '+' : ''}${pct.toFixed(2)}%)`;
             pnlEl.className = `text-base sm:text-xl font-extrabold font-mono mt-0.5 sm:mt-1 truncate ${pnlPositive ? 'text-emerald-400' : 'text-rose-400'}`;
 
             // Orders Table
