@@ -338,10 +338,20 @@ def manual_trade(sym: str = "ETH/USDT", side: str = "BUY", qty: float = 0.01):
         log_activity("Trade Executor", f"Failed {side.upper()} order: {str(e)[:40]}")
         return {"status": "error", "message": str(e)}
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATE_PATH = os.path.join(BASE_DIR, "templates", "index.html")
+
 @app.get("/", response_class=HTMLResponse)
+@app.head("/", response_class=HTMLResponse)
 def get_dashboard():
-    with open("C:/Users/Lenovo/.gemini/antigravity/scratch/binance-dashboard/templates/index.html", "r", encoding="utf-8") as f:
+    with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/healthz")
+@app.head("/healthz")
+def healthz():
+    return {"status": "ok"}
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8050)
+    port = int(os.getenv("PORT", 8050))
+    uvicorn.run(app, host="0.0.0.0", port=port)
