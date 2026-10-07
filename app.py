@@ -296,6 +296,9 @@ def run_portfolio_monitor():
             pass
 
         # CALCULATE LIVE DYNAMIC P&L ON 0.01 ETH POSITION
+        # Guard: if market_data not yet populated, run scanner first
+        if not system_state["market_data"]:
+            run_market_scanner()
         curr_eth = system_state["market_data"].get("ETH/USDT", {}).get("price", 0)
         entry_price = system_state["portfolio"]["eth_entry"]
         qty = system_state["portfolio"]["eth_qty"]
@@ -383,8 +386,14 @@ async def agent_scheduler_loop():
 
 @app.on_event("startup")
 async def startup_event():
-    # Bootstrap data immediately
+    # Bootstrap: run scanner first, wait briefly so market_data is populated,
+    # then run portfolio monitor (which reads ETH price from market_data)
     run_market_scanner()
+    if not system_state["market_data"]:
+        # Retry once if first attempt returned no data (slow cloud cold start)
+        time.sleep(1.5)
+        run_market_scanner()
+    time.sleep(0.5)
     run_signal_generator()
     run_portfolio_monitor()
     run_risk_manager()
